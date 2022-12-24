@@ -74,45 +74,67 @@ guildName       name for the created clan
 #### /clans/disbandGuild.php
 Disband a clan.
 ```
-uid             id of the clanmaster
+uid             id of the clan leader
 passwordHash    valid passwordHash to the uid
 guildName       name of the clan
 ```
 
 ---
 #### /clans/acceptGuildRequest.php
+Accept a clan join request.
 ```
-
+guildMasterUid      uid of the clan leader
+passwordHash        valid passwordHash for guildMasterUid
+uidToAccept         uid of requesting player
+guildName           name of the clan
 ```
 
 ---
 #### /clans/rejectGuildRequest.php
+Reject a clan join request.
 ```
-
+guildMasterUid      uid of the clan leader
+passwordHash        valid passwordHash for guildMasterUid
+uidToReject         uid of requesting player
+guildName           name of the clan
 ```
 
 ---
 #### /clans/acceptGuildAutoJoin.php
+Enable the clan auto-join feature.
 ```
-
+guildMasterUid      uid of the clan leader
+passwordHash        valid passwordHash for guildMasterUid
+guildName           name of the clan
 ```
 
 ---
 #### /clans/cancelGuildAutoJoin.php
+Disable the clan auto-join feature.
 ```
-
+guildMasterUid      uid of the clan leader
+passwordHash        valid passwordHash for guildMasterUid
+guildName           name of the clan
 ```
 
 ---
 #### /clans/kickGuildMember.php
+Kick a clan member.
 ```
-
+guildMasterUid      uid of the clan leader
+passwordHash        valid passwordHash for guildMasterUid
+guildName           name of the clan
+uidToKick           uid of the member that should get kicked
 ```
 
 ---
 #### /clans/changeGuildMaster.php
+Appoints another member to the clan leader.
 ```
-
+currentGuildMasterUid   uid of the clan leader
+passwordHash            valid passwordHash for currentGuildMasterUid
+guildName               name of the clan
+newGuildMasterUid       uid of the member that should become the new leader
 ```
 
 ---
@@ -128,56 +150,88 @@ guildName           name of the searched clan (optional)
 
 ---
 #### /clans/getGuildInfo.php
+Get the clan info based on uid and passwordHash.  
+Does the same thing as /clans/findGuild.php, but with different parameters.
 ```
-
+uid             uid of the player
+passwordHash    valid passwordHash for uid
 ```
 
 ---
 #### /clans/getGuildMessages.php
+Get the clan chat from a clan of choice.  
+Contains messages with corresponding timestamp and uid.
 ```
-
+uid             any uid (doesn't have to be valid)
+passwordHash    any passwordHash (doesn't have to be valid)
+guildName       name of the clan
 ```
 
 ---
 #### /clans/guildMessageMonitor.php
+Get the clan chat from a clan of choice.  
+Contains the clan chat as displayed in the game (with names and relative time).
 ```
-
+guildName       name of the clan
 ```
 
 ---
 #### /clans/getRaid.php
+Get the raid info for legacy raids.
 ```
-
+uid             any uid (doesn't have to be valid)
+passwordHash    any passwordHash (doesn't have to be valid)
+timestamp       any timestamp (doesn't have to be valid)
+guildName       name of the clan
 ```
 
 ---
 #### /clans/getNewRaid.php
+Get the raid info for immortal raids.
 ```
-
+uid             any uid (doesn't have to be valid)
+passwordHash    any passwordHash (doesn't have to be valid)
+guildName       name of the clan
 ```
 
 ---
 #### /clans/getNewRaidRewards.php
+PURPOSE NOT KNOWN YET.
 ```
-
+uid
+passwordHash
+guildName           name of the clan
+lastRaidChecked
+lastBonusChecked
 ```
 
 ---
 #### /clans/getTitanHealth.php
+Get the damage numbers on todays legacy raid.
 ```
-
+uid             any uid (doesn't have to be valid)
+passwordHash    any passwordHash (doesn't have to be valid)
+timestamp       any timestamp (doesn't have to be valid)
+guildName       name of the clan
 ```
 
 ---
 #### /clans/requestBonusFight.php
+Initiate bonus immortal raid.  
+Can only be done once daily after the regular immortal raid.
 ```
-
+uid             any uid (doesn't have to be valid)
+passwordHash    any passwordHash (doens't have to be valid)
+guildName       name of the clan
 ```
 
 ---
 #### /clans/requestNewRaidLock.php
+Lock or unlock the immortal raid level.
 ```
-
+uid             uid of the clan leader
+passwordHash    valid passwordHash for uid
+isLocked        leave it empty for unlocking, anything else for locking
 ```
 
 ---
