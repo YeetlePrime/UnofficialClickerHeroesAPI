@@ -235,33 +235,64 @@ isLocked        leave it empty for unlocking, anything else for locking
 ```
 
 ---
-#### /clans/sendNewImmortalDamage.php
+#### /clans/sendTitanDamage.php
+Add *damageDone* damage to the uids dealt damage in the legacy raid.
 ```
-
+uid             uid of the attacking player
+passwordHash    valid passwordHash for the uid
+guildName       name of the clan (the uid doesn't have to be a member of this clan)
+damageDone      damage that should be dealt
+levelStarted    raid boss level before the attack
+levelReached    raid boss level after the attack
+timestamp       any timestamp (doesn't have to be valid)
 ```
 
 ---
-#### /clans/sendTitanDamage.php
+#### /clans/sendNewImmortalDamage.php
+Change damage dealt of *uid* to *damageDone*.  
+Also sets the immortal raid level to *level*.
 ```
-
+uid             uid of attacking player
+passwordHash    valid passwordHask for uid
+guildName       name of the clan
+damageDone      damage that should be dealt (current dealt damage gets replaced  
+                by that value iff it is smaller than the new damageDone)
+level           level of the immortal. can be changed
+isBonusFight    leave empty for regular fight. anything else is bonus fight.
 ```
 
 ---
 #### /clans/updateGuildRank.php
+Update highestZoneReachedAverage of clan to a new value.  
+Apparently used for leaderboard stuff, although there is no ClickerHeroes leaderboard that I know of.  
+Maybe there is some intern leaderboard that is not accessible to users.
 ```
-
+uid                         any uid (doesn't have to be valid)
+passwordHash                any passwordHash (doesn't have to be valid)
+guildName                   name of the clan
+highestZoneReachedAverage   new average zone value
 ```
 
 ---
 #### /clans/updatePlayer.php
+Update the highest Zone ever (HZE) of a player.
 ```
-
+uid                 uid of a player
+passwordHash        valid passwordHash for the uid
+highestZone         new highest Zone ever (has to be >= current HZE to update)
 ```
 
 ---
-#### /clans/updatePlayerExtended.php
+#### /clans/updatePlayerExtended.php  NOT FINISHED
+Update the chosenClass and classLevel of a player.
 ```
-
+uid                         uid of the player
+passwordHash                valid passwordHash for the uid
+chosenClass                 0 -> None, 1 -> Rogue, 2 -> Mage  
+                            3 -> Priest, everything else bugs out
+classLevel
+lastRewardTimestamp
+lastBonusRewardTimestamp
 ```
 
 ---
