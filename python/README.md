@@ -1,1 +1,1 @@
-# A python-wrapper for the clicker heroes API
+# ch.py
