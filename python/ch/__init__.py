@@ -22,4 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ch.savefile_manager import decode_save_data, encode_save_data
+from ch.savefile_manager import (
+    decode_save_data,
+    encode_save_data
+)
+from ch.errors import (
+    CHException,
+    HTTPException
+)
