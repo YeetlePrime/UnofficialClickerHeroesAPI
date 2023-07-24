@@ -1,2 +1,7 @@
 # virtual environment
 ch-py
+
+# python specific temporaries
+build/
+dist/
+*.egg-info/
