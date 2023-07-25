@@ -62,13 +62,26 @@ class HTTPClient:
         """ Parses json formatted string to json object.
         """
         text = str(text).replace("\\", "\\\\")
-
+        
         try:
-            text = json.loads(text)
+            ret = json.loads(text)
         except:
-            raise
+            if text.startswith('<b>'):
+                messages = text.split('<br>')[0:-1]
+                for message in messages:
+                    temp = message[3:]
+                    temp = temp.split('</b>@', 1)
+                    username = temp[0]
+                    temp = temp[1].split(':', 1)
+                    time = temp[0]
+                    content = temp[1]
+                    message = {'username': username, 'time': time, 'content': content}
 
-        return text
+                ret = {'success': True, 'result': {'messages': messages}}
+            else:
+                raise
+
+        return ret
         
     async def create_session(self):
         if self.__session == None:
@@ -95,12 +108,16 @@ class HTTPClient:
                     perf = (perf_counter() - timer_start) * 1000
                     log_info = {'method': 'GET', 'url': response.url, 'perf_counter': perf, 'status': response.status}
                     LOG.debug(f'API HTTP Request: {str(log_info)}')
+                    
 
                     if 200 <= response.status < 300:
                         data = await response.json(content_type = None, loads = self._json_loads)
+
                         LOG.debug(f'{response.url} has responded with {data}.')
+
                         data['endpoint'] = endpoint
                         data['params'] = params
+
                         return data
                     else:
                         raise HTTPException(response, await response.text())
@@ -122,6 +139,10 @@ class HTTPClient:
     
     async def get_raid_damage_values(self, clan_name): # useless function, because it is already included in get_raid
         return await self.request('/clans/getTitanHealth.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'timestamp': 0})
+    
+    async def clan_message_monitor(self, clan_name):
+        return await self.request('/clans/guildMessageMonitor.php', {'guildName': clan_name})
+      
 
 
 
