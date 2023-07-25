@@ -40,6 +40,20 @@ from .errors import (
 
 LOG = logging.getLogger(__name__)
 
+
+def _json_loads(text):
+    """ Parses json formatted string to json object.
+    """
+    text = str(text).replace("\\", "\\\\")
+
+    try:
+        text = json.loads(text)
+    except:
+        raise
+
+    return text
+
+
 class HTTPClient:
     """ Client for low-level access to the API.
     Has to be initialized with 'create_session' and closed with 'close'.
@@ -95,20 +109,92 @@ class HTTPClient:
 
         except:
             raise
-        
+
+
+    # Getters without password
+    async def get_server_version(self):
+        return await self.request('/clans/getServerVersion.php')
+
     async def find_clan(self, clan_name):
         return await self.request('/clans/findGuild.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})
         
+    async def find_random_clan(self):
+        return await self.request('/clans/findGuild.php', {'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})    
+    
+    async def get_raid(self, clan_name):
+        return await self.request('/clans/getRaid.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'timestamp': -1, 'day': 'today'})
+    
+    async def get_raid_health(self, clan_name):
+        return await self.request('/clans/getTitanHealth.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'day': 'today', 'timestamp': -1})
+    
+    async def get_new_raid(self, clan_name):
+        return await self.request('/clans/getNewRaid.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'day': 'today'})
+    
+    async def get_new_raid_rewards(self, uid, clan_name):
+        return await self.request('/clans/getNewRaidRewards.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': 0, 'lastRaidChecked': 1, 'lastBonusChecked': 1})
+    
 
+    # Setters without password
+    async def request_bonus_fight(self, clan_name):
+        return await self.request('/clans/requestBonusFight.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0})
+    
+    async def send_clan_message(self, clan_name, message, uid = 0):
+        return await self.request('/clans/sendGuildMessage.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': 0, 'message': message})
+    
 
-def _json_loads(text):
-    """ Parses json formatted string to json object.
-    """
-    text = str(text).replace("\\", "\\\\")
+    # Player commands with password
+    async def get_clan_info(self, uid, password_hash):
+        return await self.request('/clans/getGuildInfo.php', {'uid': uid, 'passwordHash': password_hash})
+    
+    async def create_clan(self, uid, password_hash, clan_name):
+        return await self.request('/clans/createGuild.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def make_join_request(self, uid, password_hash, clan_name):
+        return await self.request('/clans/requestToJoinGuild.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def cancel_join_request(self, uid, password_hash, clan_name):
+        return await self.request('/clans/cancelGuildRequest.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def update_player(self, uid, password_hash, highest_zone):
+        return await self.request('/clans/updatePlayer.php', {'uid': uid, 'passwordHash': password_hash, 'highestZone': highest_zone})
+    
+    
+    # Clan Member commands with password
+    async def get_clan_messages(self, uid, password_hash, clan_name):
+        return await self.request('/clans/getGuildMessages.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': password_hash})
 
-    try:
-        text = json.loads(text)
-    except:
-        raise
-
-    return text
+    async def attack_new_raid(self, uid, password_hash, clan_name, damage_dealt, is_bonus_fight = False, level = 1):
+        if is_bonus_fight:
+            is_bonus_fight = True
+        else:
+            is_bonus_fight = ''
+        return await self.request('/clans/sendNewImmortalDamage.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name, 'damageDone': damage_dealt, 'isBonusFight': is_bonus_fight})
+        
+    async def leave_clan(self, uid, password_hash, clan_name):
+        return await self.request('/clans/leaveGuild.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    
+    # Clan Master commands with password
+    async def kick_clan_member(self, uid, password_hash, uid_to_kick, clan_name):
+        return await self.request('/clans/kickGuildMember.php', {'guildMasterUid': uid, 'passwordHash': password_hash,'uidToKick': uid_to_kick, 'guildName': clan_name})
+    
+    async def accept_join_request(self, uid, password_hash, uid_to_accept, clan_name):
+        return await self.request('/clans/acceptGuildRequest.php', {'guildMasterUid': uid, 'passwordHash': password_hash,'uidToAccept': uid_to_accept, 'guildName': clan_name})
+    
+    async def reject_join_request(self, uid, password_hash, uid_to_reject, clan_name):
+        return await self.request('/clans/rejectGuildRequest.php', {'guildMasterUid': uid, 'passwordHash': password_hash,'uidToReject': uid_to_reject, 'guildName': clan_name})
+    
+    async def disband_clan(self, uid, password_hash, clan_name):
+        return await self.request('/clans/disbandGuild.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def activate_clan_auto_join(self, uid, password_hash, clan_name):
+        return await self.request('/clans/acceptGuildAutoJoin.php', {'guildMasterUid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def deactivate_clan_auto_join(self, uid, password_hash, clan_name):
+        return await self.request('/clans/cancelGuildAutoJoin.php', {'guildMasterUid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
+    
+    async def lock_new_raid(self, uid, password_hash, clan_name):
+        return await self.request('/clans/requestNewRaidLock.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name, 'isLocked': True})
+    
+    async def unlock_new_raid(self, uid, password_hash, clan_name):
+        return await self.request('/clans/requestNewRaidLock.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name, 'isLocked': ''})
