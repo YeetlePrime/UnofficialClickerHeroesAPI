@@ -111,7 +111,11 @@ class HTTPClient:
             raise
 
 
-    # Getters without password
+
+
+
+    # IMPORTANT SECURITY UPDATE --------------------------------------------------------------------------------------------
+    # THE FOLLOWING FUNCTIONS HAVE TO BE REVISITED
     async def get_server_version(self):
         return await self.request('/clans/getServerVersion.php')
 
@@ -133,16 +137,9 @@ class HTTPClient:
     async def get_new_raid_rewards(self, uid, clan_name):
         return await self.request('/clans/getNewRaidRewards.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': 0, 'lastRaidChecked': 1, 'lastBonusChecked': 1})
     
-
-    # Setters without password
     async def request_bonus_fight(self, clan_name):
         return await self.request('/clans/requestBonusFight.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0})
     
-    async def send_clan_message(self, clan_name, message, uid = 0):
-        return await self.request('/clans/sendGuildMessage.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': 0, 'message': message})
-    
-
-    # Player commands with password
     async def get_clan_info(self, uid, password_hash):
         return await self.request('/clans/getGuildInfo.php', {'uid': uid, 'passwordHash': password_hash})
     
@@ -158,10 +155,11 @@ class HTTPClient:
     async def update_player(self, uid, password_hash, highest_zone):
         return await self.request('/clans/updatePlayer.php', {'uid': uid, 'passwordHash': password_hash, 'highestZone': highest_zone})
     
-    
-    # Clan Member commands with password
     async def get_clan_messages(self, uid, password_hash, clan_name):
         return await self.request('/clans/getGuildMessages.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': password_hash})
+    
+    async def send_clan_message(self, uid, password_hash, clan_name, message):
+        return await self.request('/clans/sendGuildMessage.php', {'guildName': clan_name, 'uid': uid, 'passwordHash': password_hash, 'message': message})
 
     async def attack_new_raid(self, uid, password_hash, clan_name, damage_dealt, is_bonus_fight = False, level = 1):
         if is_bonus_fight:
@@ -173,8 +171,6 @@ class HTTPClient:
     async def leave_clan(self, uid, password_hash, clan_name):
         return await self.request('/clans/leaveGuild.php', {'uid': uid, 'passwordHash': password_hash, 'guildName': clan_name})
     
-    
-    # Clan Master commands with password
     async def kick_clan_member(self, uid, password_hash, uid_to_kick, clan_name):
         return await self.request('/clans/kickGuildMember.php', {'guildMasterUid': uid, 'passwordHash': password_hash,'uidToKick': uid_to_kick, 'guildName': clan_name})
     
