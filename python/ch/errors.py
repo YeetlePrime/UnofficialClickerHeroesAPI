@@ -78,4 +78,10 @@ class HTTPException(CHException):
             self.message = response
 
             fmt = "Unknown Error Occured: {0}"
-            super().__init__(fmt.format(self.message))  
+            super().__init__(fmt.format(self.message))
+
+class NotSuccessful(HTTPException):
+    """ Thrown when the GET request succeeded, but the server answered with an unsuccessful message.
+
+    Subclass of :exc:'HTTPException'
+    """

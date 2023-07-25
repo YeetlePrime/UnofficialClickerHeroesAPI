@@ -28,5 +28,10 @@ from ch.savefile_manager import (
 )
 from ch.errors import (
     CHException,
-    HTTPException
+    HTTPException,
+    NotSuccessful
+)
+
+from ch.http_client import (
+    HTTPClient
 )
