@@ -41,19 +41,6 @@ from .errors import (
 LOG = logging.getLogger(__name__)
 
 
-def _json_loads(text):
-    """ Parses json formatted string to json object.
-    """
-    text = str(text).replace("\\", "\\\\")
-
-    try:
-        text = json.loads(text)
-    except:
-        raise
-
-    return text
-
-
 class HTTPClient:
     """ Client for low-level access to the API.
     Has to be initialized with 'create_session' and closed with 'close'.
@@ -70,6 +57,18 @@ class HTTPClient:
         self.__throttler = throttler
         self.__session = None
         self.__timeout = timeout
+
+    def _json_loads(self, text):
+        """ Parses json formatted string to json object.
+        """
+        text = str(text).replace("\\", "\\\\")
+
+        try:
+            text = json.loads(text)
+        except:
+            raise
+
+        return text
         
     async def create_session(self):
         if self.__session == None:
@@ -97,39 +96,40 @@ class HTTPClient:
                     log_info = {'method': 'GET', 'url': response.url, 'perf_counter': perf, 'status': response.status}
                     LOG.debug(f'API HTTP Request: {str(log_info)}')
 
-                    data = await response.json(content_type = None, loads = _json_loads)
-
                     if 200 <= response.status < 300:
+                        data = await response.json(content_type = None, loads = self._json_loads)
                         LOG.debug(f'{response.url} has responded with {data}.')
                         data['endpoint'] = endpoint
                         data['params'] = params
                         return data
                     else:
-                        raise HTTPException(response, data)
+                        raise HTTPException(response, await response.text())
 
         except:
             raise
 
+    # Already checked functions--------------------------------------------------------------------------------------------
+    # general clan functions
+    async def find_clan(self, clan_name):
+        return await self.request('/clans/findGuild.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})
+    
+    async def find_random_clan(self):
+        return await self.request('/clans/findGuild.php', {'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})
+    
+    # legacy raid getter functions
+    async def get_raid(self, clan_name):
+        return await self.request('/clans/getRaid.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'timestamp': 0})
+    
+    async def get_raid_damage_values(self, clan_name): # useless function, because it is already included in get_raid
+        return await self.request('/clans/getTitanHealth.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'timestamp': 0})
 
 
 
 
     # IMPORTANT SECURITY UPDATE --------------------------------------------------------------------------------------------
-    # THE FOLLOWING FUNCTIONS HAVE TO BE REVISITED
-    async def get_server_version(self):
-        return await self.request('/clans/getServerVersion.php')
+    # THE FOLLOWING FUNCTIONS HAVE TO BE REVISITED   
+    
 
-    async def find_clan(self, clan_name):
-        return await self.request('/clans/findGuild.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})
-        
-    async def find_random_clan(self):
-        return await self.request('/clans/findGuild.php', {'uid': 0, 'passwordHash': 0, 'highestZoneReached': 0})    
-    
-    async def get_raid(self, clan_name):
-        return await self.request('/clans/getRaid.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'timestamp': -1, 'day': 'today'})
-    
-    async def get_raid_health(self, clan_name):
-        return await self.request('/clans/getTitanHealth.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'day': 'today', 'timestamp': -1})
     
     async def get_new_raid(self, clan_name):
         return await self.request('/clans/getNewRaid.php', {'guildName': clan_name, 'uid': 0, 'passwordHash': 0, 'day': 'today'})
